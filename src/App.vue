@@ -1,4 +1,13 @@
-<script setup>
+<script>
+  import todos from "@/data/todos.js";
+
+  export default {
+    data() {
+      return {
+        todos,
+      }
+    }
+  }
 </script>
 
 <template>
@@ -19,20 +28,35 @@
       </header>
 
       <section class="todoapp__main">
-        <div class="todo completed">
+        <div
+          class="todo"
+          :class="{ completed: todo.completed }"
+          v-for="todo of todos"
+          v-bind:key="todo.id"
+        >
           <label class="todo__status-label">
             <input
               type="checkbox"
               class="todo__status"
-              checked
+              v-bind:checked="todo.completed"
             >
           </label>
 
-          <span class="todo__title">Completed Todo</span>
+          <form v-if="false">
+            <input
+              type="text"
+              class="todo__title-field"
+              placeholder="Empty todo will be deleted"
+              value="Todo is being edited now"
+            >
+          </form>
 
-          <button class="todo__remove">x</button>
+          <template v-else>
+            <span class="todo__title">{{ todo.title }}</span>
 
-          <div class="modal overlay">
+            <button class="todo__remove">x</button>
+          </template>
+          <div class="modal overlay" :class="{ 'is-active': false }">
             <div class="modal-background has-background-white-ter"></div>
             <div class="loader"></div>
           </div>
