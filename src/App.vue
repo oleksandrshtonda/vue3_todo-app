@@ -31,14 +31,14 @@
         <div
           class="todo"
           :class="{ completed: todo.completed }"
-          v-for="todo of todos"
+          v-for="(todo, index) of todos"
           v-bind:key="todo.id"
         >
           <label class="todo__status-label">
             <input
               type="checkbox"
               class="todo__status"
-              v-bind:checked="todo.completed"
+              v-model="todo.completed"
             >
           </label>
 
@@ -54,7 +54,7 @@
           <template v-else>
             <span class="todo__title">{{ todo.title }}</span>
 
-            <button class="todo__remove">x</button>
+            <button class="todo__remove" v-on:click="todos.splice(index, 1)">x</button>
           </template>
           <div class="modal overlay" :class="{ 'is-active': false }">
             <div class="modal-background has-background-white-ter"></div>
