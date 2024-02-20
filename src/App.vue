@@ -1,5 +1,10 @@
 <script>
+  import StatusFilter from './components/StatusFilter.vue';
+
   export default {
+    components: {
+      StatusFilter,
+    },
     data() {
       let todos = [];
       const jsonData = localStorage.getItem('todos') || '[]';
@@ -11,6 +16,7 @@
       return {
         todos,
         title: '',
+        status: 'all',
       };
     },
     computed: {
@@ -108,11 +114,9 @@
           {{ activeTodos.length }} items left
         </span>
 
-        <nav class="filter">
-          <a href="" class="filter__link selected">All</a>
-          <a href="" class="filter__link">Active</a>
-          <a href="" class="filter__link">Completed</a>
-        </nav>
+        <StatusFilter
+          v-model="status"
+        />
 
         <button class="todoapp__clear-completed" v-if="activeTodos.length > 0">
           Clear completed
