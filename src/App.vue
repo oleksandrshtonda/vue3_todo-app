@@ -1,16 +1,29 @@
 <script>
-  import todos from "@/data/todos.js";
-
   export default {
     data() {
+      let todos = [];
+      const jsonData = localStorage.getItem('todos') || '[]';
+
+      try {
+        todos = JSON.parse(jsonData);
+      } catch (e) {}
+
       return {
         todos,
         title: '',
-      }
+      };
     },
     computed: {
       activeTodos() {
         return this.todos.filter(todo => !todo.completed)
+      }
+    },
+    watch: {
+      todos: {
+        deep: true,
+        handler() {
+          localStorage.setItem('todos', JSON.stringify(this.todos))
+        }
       }
     },
     methods: {
@@ -29,7 +42,7 @@
 
         this.title = '';
       }
-    }
+    },
   }
 </script>
 
