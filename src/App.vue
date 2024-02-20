@@ -5,11 +5,29 @@
     data() {
       return {
         todos,
+        title: '',
       }
     },
     computed: {
       activeTodos() {
         return this.todos.filter(todo => !todo.completed)
+      }
+    },
+    methods: {
+      handleSubmit() {
+        if (this.title.trim().length < 3) {
+          return;
+        }
+
+        const newTodo = {
+          id: Date.now(),
+          title: this.title.trim(),
+          completed: false,
+        }
+
+        this.todos.push(newTodo);
+
+        this.title = '';
       }
     }
   }
@@ -26,11 +44,12 @@
             :class="{ active: activeTodos.length === 0 }"
         ></button>
 
-        <form>
+        <form @submit.prevent="handleSubmit">
           <input
             type="text"
             class="todoapp__new-todo"
             placeholder="What needs to be done?"
+            v-model="title"
           >
         </form>
       </header>
@@ -88,7 +107,7 @@
       </footer>
     </div>
 
-    <article class="message is-danger message--hidden">
+    <article class="message is-danger message--hidden" v-if="false">
       <div class="message-header">
         <p>Error</p>
 
