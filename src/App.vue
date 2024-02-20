@@ -56,7 +56,7 @@
 
 <template>
   <div class="todoapp">
-    <h1 class="todoapp__title">todos</h1>
+    <h1 class="todoapp__title">ToDo App</h1>
 
     <div class="todoapp__content">
       <header class="todoapp__header">
