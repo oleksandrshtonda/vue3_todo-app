@@ -1,5 +1,6 @@
 <script>
 export default {
+  name: 'StatusFilter',
   props: {
     modelValue: String,
   },
