@@ -6,6 +6,11 @@
       return {
         todos,
       }
+    },
+    computed: {
+      activeTodos() {
+        return this.todos.filter(todo => !todo.completed)
+      }
     }
   }
 </script>
@@ -16,7 +21,10 @@
 
     <div class="todoapp__content">
       <header class="todoapp__header">
-        <button class="todoapp__toggle-all active"></button>
+        <button
+            class="todoapp__toggle-all"
+            :class="{ active: activeTodos.length === 0 }"
+        ></button>
 
         <form>
           <input
@@ -62,11 +70,28 @@
           </div>
         </div>
       </section>
+
+      <footer class="todoapp__footer">
+        <span class="todo-count">
+          {{ activeTodos.length }} items left
+        </span>
+
+        <nav class="filter">
+          <a href="" class="filter__link selected">All</a>
+          <a href="" class="filter__link">Active</a>
+          <a href="" class="filter__link">Completed</a>
+        </nav>
+
+        <button class="todoapp__clear-completed" v-if="activeTodos.length > 0">
+          Clear completed
+        </button>
+      </footer>
     </div>
 
     <article class="message is-danger message--hidden">
       <div class="message-header">
         <p>Error</p>
+
         <button class="delete"></button>
       </div>
 
