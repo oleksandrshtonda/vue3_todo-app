@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "./deploy.sh"
+
+    "prepare-to-deploy": "chmod +x deploy.sh",
+    "run-deploy-script": "deploy.sh",
+    "deploy": "npm run prepare-to-deploy && npm run run-deploy-script"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.1",
