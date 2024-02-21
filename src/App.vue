@@ -1,24 +1,21 @@
 <script>
   import StatusFilter from './components/StatusFilter.vue';
   import TodoItem from "@/components/TodoItem.vue";
+  import {createTodo, deleteTodo, getTodos, updateTodo} from "@/api/todos.api.js";
+  import Message from "@/components/Message.vue";
 
   export default {
     components: {
       TodoItem,
       StatusFilter,
+      Message,
     },
     data() {
-      let todos = [];
-      const jsonData = localStorage.getItem('todos') || '[]';
-
-      try {
-        todos = JSON.parse(jsonData);
-      } catch (e) {}
-
       return {
-        todos,
+        todos: [],
         title: '',
         status: 'all',
+        errorMessage: '',
       };
     },
     computed: {
@@ -41,13 +38,12 @@
         }
       }
     },
-    watch: {
-      todos: {
-        deep: true,
-        handler() {
-          localStorage.setItem('todos', JSON.stringify(this.todos))
-        }
-      }
+    mounted() {
+      getTodos()
+        .then(({ data }) => this.todos = data)
+        .catch(() => {
+          this.errorMessage = 'Unable to load todos'
+        })
     },
     methods: {
       handleSubmit() {
@@ -55,15 +51,32 @@
           return;
         }
 
-        const newTodo = {
-          id: Date.now(),
-          title: this.title.trim(),
-          completed: false,
-        }
-
-        this.todos.push(newTodo);
-
-        this.title = '';
+      createTodo(this.title.trim())
+        .then(({data}) => {
+          this.todos = [...this.todos, data];
+          this.title = '';
+        })
+        .catch(() => {
+          this.errorMessage = 'Unable to create the todo'
+        });
+      },
+      updateTodo({ id, title, completed }) {
+        updateTodo({ id, title, completed })
+          .then(({ data }) => {
+            this.todos = this.todos.map(todo => todo.id !== id ? todo : data);
+          })
+          .catch(() => {
+            this.errorMessage = 'Unable to update the todo'
+          });
+      },
+      deleteTodo(todoId) {
+        deleteTodo(todoId)
+          .then(() => {
+            this.todos = this.todos.filter(todo => todo.id !== todoId);
+          })
+          .catch(() => {
+            this.errorMessage = 'Unable to delete the todo'
+          });
       }
     },
   }
@@ -99,8 +112,8 @@
           v-for="(todo) of visibleTodos"
           v-bind:key="todo.id"
           :todo="todo"
-          @update="Object.assign(todo, $event)"
-          @delete="todos.splice(todos.indexOf(todo), 1)"
+          @update="updateTodo"
+          @delete="deleteTodo(todo.id)"
         />
       </TransitionGroup>
 
@@ -119,16 +132,18 @@
       </footer>
     </div>
 
-    <article class="message is-danger message--hidden" v-if="false">
-      <div class="message-header">
-        <p>Error</p>
+    <Message
+      class="is-danger"
+      :active="errorMessage !== ''"
+      @hide="errorMessage = ''"
+    >
+      <template #default>
+        <p>{{ errorMessage }}</p>
+      </template>
 
-        <button class="delete"></button>
-      </div>
-
-      <div class="message-body">
-        Unable to add a Todo
-      </div>
-    </article>
+      <template #header>
+        <p>Server Error</p>
+      </template>
+    </Message>
   </div>
 </template>

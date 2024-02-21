@@ -55,7 +55,7 @@
 
         this.$nextTick(() => {
           this.$refs['title-field'].focus();
-        })
+        });
       }
     }
   }
