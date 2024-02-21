@@ -23,7 +23,22 @@
     },
     computed: {
       activeTodos() {
-        return this.todos.filter(todo => !todo.completed)
+        return this.todos.filter(todo => !todo.completed);
+      },
+      completedTodos() {
+        return this.todos.filter(todo => todo.completed);
+      },
+      visibleTodos() {
+        switch (this.status) {
+          case 'active':
+            return this.activeTodos;
+
+          case 'completed':
+            return this.completedTodos;
+
+          default:
+            return this.todos;
+        }
       }
     },
     watch: {
@@ -75,15 +90,19 @@
         </form>
       </header>
 
-      <section class="todoapp__main">
+      <TransitionGroup
+        name="list"
+        tag="section"
+        class="todoapp__main"
+      >
         <TodoItem
-          v-for="(todo, index) of todos"
+          v-for="(todo) of visibleTodos"
           v-bind:key="todo.id"
           :todo="todo"
-          @update="todos[index] = $event"
-          @delete="todos.splice(index, 1)"
+          @update="Object.assign(todo, $event)"
+          @delete="todos.splice(todos.indexOf(todo), 1)"
         />
-      </section>
+      </TransitionGroup>
 
       <footer class="todoapp__footer">
         <span class="todo-count">
